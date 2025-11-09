@@ -1,0 +1,43 @@
+{
+  "name": "mern-jira",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev:client": "pnpm -C apps/client dev",
+    "dev:server": "pnpm -C apps/server dev",
+    "dev": "concurrently -k \"pnpm:dev:server\" \"pnpm:dev:client\"",
+    "build": "pnpm -w build:shared && pnpm -C apps/server build && pnpm -C apps/client build",
+    "build:shared": "pnpm -C packages/shared build",
+    "test": "pnpm -C apps/server test && pnpm -C apps/client test",
+    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings=0",
+    "typecheck": "tsc -b",
+    "format": "prettier --write .",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down -v"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^6.0.0-rc.1",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.38.0"
+  }
+}

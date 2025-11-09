@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - '27017:27017'
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/mernjira
+      - JWT_SECRET=${JWT_SECRET:-change-me}
+      - CORS_ORIGIN=http://localhost
+    depends_on:
+      - mongo
+    ports:
+      - '4000:4000'
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    depends_on:
+      - server
+    ports:
+      - '80:80'
+
+volumes:
+  mongo-data:
