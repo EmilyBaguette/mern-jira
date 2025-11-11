@@ -1,10 +1,9 @@
 import { Box, Stack, Toolbar } from '@mui/material';
 
+import AppNavbar from 'layouts/appNavBar';
+import Header from 'layouts/header';
+import SideMenu from 'layouts/sideMenu';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
-
-import AppNavbar from 'src/layouts/appNavBar';
-import Header from 'src/layouts/header';
-import SideMenu from 'src/layouts/sideMenu';
 
 export default function RootLayout() {
   return (

@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express from 'express';
+import express, { type Express } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 

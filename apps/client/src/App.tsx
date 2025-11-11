@@ -2,9 +2,9 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 
 import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
+import { store } from 'store/store';
 
 import { router } from './routes/router';
-import { store } from './store/store';
 
 const theme = createTheme({ palette: { mode: 'light' } });
 

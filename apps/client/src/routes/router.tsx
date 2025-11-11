@@ -1,7 +1,6 @@
+import RootLayout from 'layouts/rootLayout/RootLayout';
+import Spaces from 'pages/spaces';
 import { createBrowserRouter } from 'react-router-dom';
-
-import RootLayout from 'src/layouts/rootLayout/RootLayout';
-import Spaces from 'src/pages/spaces';
 
 export const router = createBrowserRouter([
   {

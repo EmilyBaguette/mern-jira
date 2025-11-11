@@ -1,10 +1,10 @@
-import { TicketCreateSchema, TicketUpdateSchema } from '@acme/shared';
 import { Router } from 'express';
 
 import { requireAuth } from '../middleware/auth';
 import { Ticket } from '../models/Ticket.model';
+import { TicketCreateSchema, TicketUpdateSchema } from '../zod';
 
-const router: ExpressRouter = Router();
+const router: Router = Router();
 
 router.get('/', requireAuth, async (_req, res) => {
   const tickets = await Ticket.find().sort({ order: 1 });

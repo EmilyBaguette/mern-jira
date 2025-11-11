@@ -1,11 +1,11 @@
-import { AuthLoginSchema } from '@acme/shared';
 import { Router } from 'express';
 import { z } from 'zod';
 
 import { User } from '../models/User.model';
 import { hashPassword, signJwt, verifyPassword } from '../utils/crypto';
+import { AuthLoginSchema } from '../zod';
 
-const router: ExpressRouter = Router();
+const router: Router = Router();
 
 router.post('/register', async (req, res) => {
   const schema = AuthLoginSchema.extend({ name: z.string().min(1) });
