@@ -1,34 +1,53 @@
 services:
   mongo:
     image: mongo:7
-    restart: unless-stopped
+    command: ['--bind_ip_all']
+    ports:
+      - '27017:27017' # optional: expose to host for local tooling
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.runCommand({ ping: 1 }).ok']
+      interval: 1m
+      timeout: 3s
+      start_period: 20s
+      retries: 3
     volumes:
       - mongo-data:/data/db
-    ports:
-      - '27017:27017'
 
   server:
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
+      target: base
+    image: mern-base:dev
+    working_dir: /opt/apps/server
+    command: ['npx', 'tsx', 'watch', 'src/index.ts']
     environment:
-      - PORT=4000
-      - MONGO_URI=mongodb://mongo:27017/mernjira
-      - JWT_SECRET=${JWT_SECRET:-change-me}
-      - CORS_ORIGIN=http://localhost
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: 'true'
+      # Use the Docker service name "mongo" instead of localhost
+      CORS_ORIGIN: http://localhost:5173
+      MONGODB_URI: mongodb://mongo:27017/app
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     ports:
-      - '4000:4000'
+      - '3000:3000'
+    volumes:
+      - ./apps/server:/opt/apps/server
 
-  web:
-    build:
-      context: .
-      dockerfile: apps/client/Dockerfile
+  client:
+    image: mern-base:dev
+    working_dir: /opt/apps/client
+    command: ['npm', 'run', 'dev', '--', '--host', '0.0.0.0']
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:3000
+      CHOKIDAR_USEPOLLING: 'true'
     depends_on:
       - server
     ports:
-      - '80:80'
+      - '5173:5173'
+    volumes:
+      - ./apps/client:/opt/apps/client
 
 volumes:
   mongo-data:

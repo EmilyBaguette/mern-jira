@@ -1,13 +1,15 @@
 {
   "name": "mern-jira",
   "private": true,
-  "packageManager": "pnpm@9.12.0",
+  "workspaces": [
+    "apps/**"
+  ],
   "scripts": {
-    "dev:client": "pnpm -C apps/client dev",
-    "dev:server": "pnpm -C apps/server dev",
-    "dev": "concurrently -k \"pnpm:dev:server\" \"pnpm:dev:client\"",
-    "build": "pnpm -C apps/server build && pnpm -C apps/client build",
-    "test": "pnpm -C apps/server test && pnpm -C apps/client test",
+    "dev:client": "npm -C apps/client dev",
+    "dev:server": "npm -C apps/server dev",
+    "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
+    "build": "npm -C apps/server build && npm -C apps/client build",
+    "test": "npm -C apps/server test && npm -C apps/client test",
     "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings=0",
     "typecheck": "tsc -b --pretty false --noEmit",
     "format": "prettier --write .",
