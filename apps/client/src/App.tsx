@@ -1,7 +1,5 @@
-import { useEffect } from 'react';
-
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import { store } from 'store/store';

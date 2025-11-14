@@ -12,6 +12,5 @@
   "htmlWhitespaceSensitivity": "css",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": ["^react$|^react-dom", "^@mui", "<THIRD_PARTY_MODULES>", "^src/.*$", "^[./]"],
-  "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

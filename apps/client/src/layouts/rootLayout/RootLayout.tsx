@@ -1,5 +1,4 @@
 import { Box, Stack, Toolbar } from '@mui/material';
-
 import AppNavbar from 'layouts/appNavBar';
 import Header from 'layouts/header';
 import SideMenu from 'layouts/sideMenu';

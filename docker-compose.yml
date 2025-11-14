@@ -6,9 +6,6 @@ services:
       - '27017:27017' # optional: expose to host for local tooling
     healthcheck:
       test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.runCommand({ ping: 1 }).ok']
-      interval: 1m
-      timeout: 3s
-      start_period: 20s
       retries: 3
     volumes:
       - mongo-data:/data/db

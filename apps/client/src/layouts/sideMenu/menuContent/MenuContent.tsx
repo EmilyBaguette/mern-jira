@@ -1,42 +1,94 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
-import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
+import { Fragment, useState } from 'react';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
-
-const mainListItems = [
-  { text: 'For you', Icon: AccountCircleOutlinedIcon },
-  { text: 'Recent', Icon: AccessTimeOutlinedIcon },
-  { text: 'Spaces', Icon: PublicOutlinedIcon },
-  { text: 'Teams', Icon: PeopleAltOutlinedIcon },
-  { text: 'Settings', Icon: SettingsOutlinedIcon },
-];
+import { NavLink } from 'react-router-dom';
+import { appRoutes } from 'routes/router';
+import type { AppRoute, LinkAppRoute, SectionAppRoute } from 'routes/router';
 
 export default function MenuContent() {
-  return (
-    <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between', flex: 1 }}>
-      <List dense>
-        {mainListItems.map(({ text, Icon }, index) => (
-          <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton>
+  const rootRoute = appRoutes[0];
+  const navItems = rootRoute.children;
+
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (path: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [path]: !prev[path],
+    }));
+  };
+
+  const renderLinkItem = (route: LinkAppRoute, parentPath?: string) => {
+    const Icon = route.icon;
+    const fullPath = parentPath
+      ? `/${parentPath}/${route.path}`.replace('//', '/')
+      : `/${route.path}`.replace('//', '/');
+
+    return (
+      <ListItem key={fullPath} disablePadding sx={{ display: 'block' }}>
+        <ListItemButton
+          component={NavLink}
+          to={fullPath}
+          sx={{
+            '&.active': {
+              bgcolor: 'action.selected',
+            },
+          }}
+        >
+          {Icon && (
+            <ListItemIcon sx={{ minWidth: 32 }}>
+              <Icon fontSize="small" />
+            </ListItemIcon>
+          )}
+          <ListItemText primary={route.label} />
+        </ListItemButton>
+      </ListItem>
+    );
+  };
+
+  const renderSectionItem = (route: SectionAppRoute) => {
+    const Icon = route.icon;
+    const isOpen = openSections[route.path ?? ''] ?? true; // default to open
+
+    return (
+      <Fragment key={route.path}>
+        <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItemButton onClick={() => toggleSection(route?.path ?? '')}>
+            {Icon && (
               <ListItemIcon sx={{ minWidth: 32 }}>
                 <Icon fontSize="small" />
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+            )}
+            <ListItemText primary={route.label} />
+            {isOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+        </ListItem>
+
+        <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding dense>
+            {route.children.map((child) => renderLinkItem(child as LinkAppRoute, route.path))}
+          </List>
+        </Collapse>
+      </Fragment>
+    );
+  };
+
+  return (
+    <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between', flex: 1 }}>
+      <List dense>
+        {navItems.map((route: AppRoute) => {
+          if (route.type === 'link') {
+            return renderLinkItem(route as LinkAppRoute);
+          }
+          return renderSectionItem(route as SectionAppRoute);
+        })}
       </List>
     </Stack>
   );
