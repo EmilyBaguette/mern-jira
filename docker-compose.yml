@@ -16,11 +16,10 @@ services:
       target: base
     image: mern-base:dev
     working_dir: /opt/apps/server
-    command: ['npx', 'tsx', 'watch', 'src/index.ts']
+    command: ['npm', 'run', 'dev']
     environment:
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: 'true'
-      # Use the Docker service name "mongo" instead of localhost
       CORS_ORIGIN: http://localhost:5173
       MONGODB_URI: mongodb://mongo:27017/app
     depends_on:
@@ -37,10 +36,8 @@ services:
     command: ['npm', 'run', 'dev', '--', '--host', '0.0.0.0']
     environment:
       NODE_ENV: development
-      VITE_API_URL: http://localhost:3000
+      VITE_API_URL: http://server:3000
       CHOKIDAR_USEPOLLING: 'true'
-    depends_on:
-      - server
     ports:
       - '5173:5173'
     volumes:
