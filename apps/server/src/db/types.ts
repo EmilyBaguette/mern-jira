@@ -8,15 +8,24 @@ import { ObjectId } from 'mongodb';
  * - `IdKeys` -> ObjectId (e.g. projectId, reporterId, assigneeId)
  * - `TimeKeys` -> Date (e.g. createdAt, updatedAt)
  */
+
+type OptionalKeys<T> = {
+  [K in keyof T]-?: undefined extends T[K] ? K : never;
+}[keyof T];
+
 export type DbDoc<T, IdKeys extends keyof T = never, TimeKeys extends keyof T = never> = Omit<
   T,
   'id' | IdKeys | TimeKeys
 > & {
   _id: ObjectId;
 } & {
-  [K in IdKeys]: ObjectId;
+  [K in Exclude<IdKeys, OptionalKeys<T>>]: ObjectId;
 } & {
-  [K in TimeKeys]: Date;
+  [K in Extract<IdKeys, OptionalKeys<T>>]?: ObjectId;
+} & {
+  [K in Exclude<TimeKeys, OptionalKeys<T>>]: Date;
+} & {
+  [K in Extract<TimeKeys, OptionalKeys<T>>]?: Date;
 };
 
 export type IssueDb = DbDoc<
