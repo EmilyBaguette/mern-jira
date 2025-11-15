@@ -1,8 +1,9 @@
 {
-  "name": "mern-jira",
+  "name": "tiny-tickets",
   "private": true,
   "workspaces": [
-    "apps/**"
+    "apps/*",
+    "packages/*"
   ],
   "type": "module",
   "scripts": {

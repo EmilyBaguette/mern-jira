@@ -2,8 +2,6 @@ services:
   mongo:
     image: mongo:7
     command: ['--bind_ip_all']
-    ports:
-      - '27017:27017' # optional: expose to host for local tooling
     healthcheck:
       test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.runCommand({ ping: 1 }).ok']
       retries: 3
@@ -13,7 +11,6 @@ services:
   server:
     build:
       context: .
-      target: base
     image: mern-base:dev
     working_dir: /opt/apps/server
     command: ['npm', 'run', 'dev']

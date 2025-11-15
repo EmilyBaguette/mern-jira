@@ -1,4 +1,4 @@
-FROM node:24-alpine AS base
+FROM node:24-alpine
 WORKDIR /opt
 
 COPY package.json package-lock.json tsconfig.base.json ./
