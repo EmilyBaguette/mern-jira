@@ -9,7 +9,5 @@
   "arrowParens": "always",
   "jsxSingleQuote": false,
   "bracketSameLine": false,
-  "htmlWhitespaceSensitivity": "css",
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrderSortSpecifiers": true
+  "htmlWhitespaceSensitivity": "css"
 }

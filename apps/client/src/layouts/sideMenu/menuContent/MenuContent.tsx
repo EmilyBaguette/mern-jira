@@ -1,4 +1,3 @@
-import { Fragment, useState } from 'react';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
@@ -8,8 +7,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
+import { Fragment, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { appRoutes } from 'routes/router';
+
 import type { AppRoute, LinkAppRoute, SectionAppRoute } from 'routes/router';
 
 export default function MenuContent() {

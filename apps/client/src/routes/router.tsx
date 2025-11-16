@@ -9,6 +9,7 @@ import RecentPage from 'pages/recentPage';
 import SettingsPage from 'pages/settingsPage';
 import TeamsPage from 'pages/teamsPage';
 import { createBrowserRouter } from 'react-router-dom';
+
 import type { RouteObject } from 'react-router-dom';
 
 export type LinkAppRoute = RouteObject & {

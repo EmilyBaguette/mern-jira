@@ -1,34 +1,67 @@
-import cors from 'cors';
-import express, { type Express } from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
+// src/app.ts
+import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+import Fastify from 'fastify';
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
 import { config } from './config';
-import { errorHandler } from './middleware/error';
-import boardRoutes from './routes/boards.routes';
-import projectRoutes from './routes/projects.routes';
-import ticketRoutes from './routes/tickets.routes';
+// import { registerIssueRoutes } from './routes/issues.routes';
+// import { registerProjectRoutes } from './routes/projects.routes';
+// import { registerUserRoutes } from './routes/users.routes';
 
-const app: Express = express();
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-app.use(helmet());
-app.use(
-  cors({
-    origin: config.corsOrigin, // e.g. "http://localhost:5173"
-    credentials: false, // you're not using cookies right now
+export function buildApp() {
+  const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
+
+  app.register(swagger, {
+    openapi: {
+      info: {
+        title: 'Tiny Tickets API',
+        version: '1.0.0',
+      },
+    },
+    transform: jsonSchemaTransform,
+  });
+
+  app.register(swaggerUi, {
+    routePrefix: '/docs',
+  });
+
+  app.register(helmet);
+  app.register(cors, {
+    origin: config.corsOrigin,
+    credentials: false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'], // add "Authorization" later if you re-enable header auth
-    optionsSuccessStatus: 204,
-  })
-);
-app.use(express.json());
-app.use(morgan('tiny'));
+    allowedHeaders: ['Content-Type'],
+  });
 
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
-// app.use('/api/auth', authRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/boards', boardRoutes);
-app.use('/api/tickets', ticketRoutes);
+  app.get('/api/health', {
+    schema: {
+      tags: ['Meta'],
+      summary: 'Health check',
+      response: {
+        200: z.object({ ok: z.boolean() }),
+      },
+    },
+    handler: async () => ({ ok: true }),
+  });
 
-app.use(errorHandler);
-export default app;
+  // registerIssueRoutes(app);
+  // registerProjectRoutes(app);
+  // registerUserRoutes(app);
+
+  return app;
+}
+
+export type AppInstance = ReturnType<typeof buildApp>;

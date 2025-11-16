@@ -26,6 +26,7 @@ services:
       - '3000:3000'
     volumes:
       - ./apps/server:/opt/apps/server
+      - ./packages:/opt/packages
 
   client:
     image: mern-base:dev
@@ -39,6 +40,7 @@ services:
       - '5173:5173'
     volumes:
       - ./apps/client:/opt/apps/client
+      - ./packages:/opt/packages
 
 volumes:
   mongo-data:

@@ -70,7 +70,7 @@ export default defineConfig([
         'error',
         {
           prefer: 'type-imports',
-          fixType: 'prefer-inline-type-imports',
+          fixStyle: 'separate-type-imports',
         },
       ],
     },

@@ -1,7 +1,10 @@
-import type { IssueDb } from '../db/types';
-import { omitUndefined } from './utils';
-import type { Issue, IssueInput, IssueUpdate } from 'api-contracts';
 import { ObjectId } from 'mongodb';
+
+import { omitUndefined } from './mapper.utils';
+
+import type { IssueDb } from '../db/schemas/issue.dbSchema';
+import type { Issue, IssueInput, IssueUpdate } from 'api-contracts/issue';
+
 
 export function issueDbToApi(doc: IssueDb): Issue {
   return {

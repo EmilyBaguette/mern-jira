@@ -1,32 +1,93 @@
-import { issueDbToApi } from '../mappers/issue';
+import { type Issue, IssueInputSchema, IssueSchema, IssueUpdateSchema } from 'api-contracts/issue';
+
+import { IdParamsSchema, getNotFoundMessageAndSchema } from './routes.common';
+import { issueDbToApi } from '../mappers/issue.mapper';
 import {
   createIssueRepo,
   getIssueByIdRepo,
   updateIssueRepo,
-} from '../repositories/issue.repository';
-import type { Request, Response } from 'express';
+} from '../repositories/issues.repository';
 
-export async function getIssueByIdHandler(req: Request, res: Response) {
-  const issue = await getIssueByIdRepo(req.params.id);
+import type { AppInstance } from '../app';
 
-  if (!issue) {
-    return res.sendStatus(404);
-  }
+const ISSUE_TAG = 'Issues' as const;
 
-  return res.json(issueDbToApi(issue));
-}
+const { notFoundMessage, notFoundSchema } = getNotFoundMessageAndSchema('Issue');
 
-export async function updateIssueHandler(req: Request, res: Response) {
-  const updated = await updateIssueRepo(req.params.id, req.body);
+export function registerIssueRoutes(app: AppInstance) {
+  app.get(
+    '/api/issues/:id',
+    {
+      schema: {
+        tags: [ISSUE_TAG],
+        summary: 'Get issue by ID',
+        params: IdParamsSchema,
+        response: {
+          200: IssueSchema,
+          404: notFoundSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params;
 
-  if (!updated) {
-    return res.sendStatus(404);
-  }
+      const issue = await getIssueByIdRepo(id);
+      if (!issue) {
+        return reply.status(404).send(notFoundMessage);
+      }
 
-  return res.json(issueDbToApi(updated));
-}
+      const apiIssue: Issue = issueDbToApi(issue);
+      return reply.send(apiIssue);
+    }
+  );
 
-export async function createIssueHandler(req: Request, res: Response) {
-  const created = await createIssueRepo(req.body);
-  return res.status(201).json(issueDbToApi(created));
+  app.patch(
+    '/api/issues/:id',
+    {
+      schema: {
+        tags: [ISSUE_TAG],
+        summary: 'Update issue',
+        params: IdParamsSchema,
+        body: IssueUpdateSchema,
+        response: {
+          200: IssueSchema,
+          404: notFoundSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      const body = request.body;
+
+      const updated = await updateIssueRepo(id, body);
+      if (!updated) {
+        return reply.status(404).send(notFoundMessage);
+      }
+
+      const apiIssue: Issue = issueDbToApi(updated);
+      return reply.send(apiIssue);
+    }
+  );
+
+  app.post(
+    '/api/issues',
+    {
+      schema: {
+        tags: [ISSUE_TAG],
+        summary: 'Create issue',
+        body: IssueInputSchema,
+        response: {
+          201: IssueSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body;
+
+      const created = await createIssueRepo(body);
+      const apiIssue = issueDbToApi(created);
+
+      return reply.status(201).send(apiIssue);
+    }
+  );
 }
