@@ -11,6 +11,7 @@ import {
 import { z } from 'zod';
 
 import { config } from './config';
+import { errorHandler } from './middleware/error-handler';
 import { registerIssueRoutes } from './routes/issues.routes';
 import { registerProjectRoutes } from './routes/projects.routes';
 import { registerUserRoutes } from './routes/users.routes';
@@ -44,6 +45,8 @@ export function buildApp() {
     credentials: true,
   });
 
+  app.setErrorHandler(errorHandler);
+
   app.after(() => {
     app.get('/api/health', {
       schema: {
@@ -53,7 +56,7 @@ export function buildApp() {
           200: z.object({ ok: z.boolean() }),
         },
       },
-      handler: async () => ({ ok: true }),
+      handler: async () => ({ ok: '5' }),
     });
 
     registerIssueRoutes(app);
