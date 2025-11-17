@@ -41,9 +41,7 @@ export function buildApp() {
   app.register(helmet);
   app.register(cors, {
     origin: config.corsOrigin,
-    credentials: false,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
+    credentials: true,
   });
 
   app.after(() => {
