@@ -10,7 +10,7 @@ const theme = createTheme({ palette: { mode: 'light' } });
 
 export default function App() {
   useEffect(() => {
-    fetch('/api/tickets');
+    fetch('/api/projects');
   }, []);
 
   return (

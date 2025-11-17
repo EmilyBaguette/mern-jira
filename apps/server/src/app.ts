@@ -1,4 +1,3 @@
-// src/app.ts
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
@@ -12,9 +11,9 @@ import {
 import { z } from 'zod';
 
 import { config } from './config';
-// import { registerIssueRoutes } from './routes/issues.routes';
-// import { registerProjectRoutes } from './routes/projects.routes';
-// import { registerUserRoutes } from './routes/users.routes';
+import { registerIssueRoutes } from './routes/issues.routes';
+import { registerProjectRoutes } from './routes/projects.routes';
+import { registerUserRoutes } from './routes/users.routes';
 
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
@@ -30,6 +29,7 @@ export function buildApp() {
         title: 'Tiny Tickets API',
         version: '1.0.0',
       },
+      servers: [{ url: `http://localhost:${config.port}` }],
     },
     transform: jsonSchemaTransform,
   });
@@ -46,20 +46,22 @@ export function buildApp() {
     allowedHeaders: ['Content-Type'],
   });
 
-  app.get('/api/health', {
-    schema: {
-      tags: ['Meta'],
-      summary: 'Health check',
-      response: {
-        200: z.object({ ok: z.boolean() }),
+  app.after(() => {
+    app.get('/api/health', {
+      schema: {
+        tags: ['Meta'],
+        summary: 'Health check',
+        response: {
+          200: z.object({ ok: z.boolean() }),
+        },
       },
-    },
-    handler: async () => ({ ok: true }),
-  });
+      handler: async () => ({ ok: true }),
+    });
 
-  // registerIssueRoutes(app);
-  // registerProjectRoutes(app);
-  // registerUserRoutes(app);
+    registerIssueRoutes(app);
+    registerProjectRoutes(app);
+    registerUserRoutes(app);
+  });
 
   return app;
 }

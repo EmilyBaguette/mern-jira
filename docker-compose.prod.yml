@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:7
+    command: ['--bind_ip_all']
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.runCommand({ ping: 1 }).ok']
+      retries: 3
+    volumes:
+      - mongo-data:/data/db
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server
+    image: mern-base-server
+    environment:
+      NODE_ENV: production
+      CORS_ORIGIN: https://your-frontend-domain.com
+      MONGODB_URI: mongodb://mongo:27017/app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - '3000:3000'
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: client
+    image: mern-base-client
+    environment:
+      # If you need to bake the API URL into the Vite build, also set
+      # VITE_API_URL at build time via `docker build` args or envs.
+      # Here it's just an example runtime env (nginx itself doesn't use it).
+      VITE_API_URL: https://your-api-domain.com
+    ports:
+      - '80:80'
+
+volumes:
+  mongo-data:

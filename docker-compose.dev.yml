@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   mongo:
     image: mongo:7
@@ -11,7 +13,9 @@ services:
   server:
     build:
       context: .
-    image: mern-base:dev
+      dockerfile: Dockerfile
+      target: dev
+    image: mern-base-dev
     working_dir: /opt/apps/server
     command: ['npm', 'run', 'dev']
     environment:
@@ -25,11 +29,14 @@ services:
     ports:
       - '3000:3000'
     volumes:
+      # app code
       - ./apps/server:/opt/apps/server
       - ./packages:/opt/packages
+      # optional: if you want client code inside the container too
+      - ./apps/client:/opt/apps/client
 
   client:
-    image: mern-base:dev
+    image: mern-base-dev
     working_dir: /opt/apps/client
     command: ['npm', 'run', 'dev', '--', '--host', '0.0.0.0']
     environment:

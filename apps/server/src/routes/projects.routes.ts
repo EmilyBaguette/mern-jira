@@ -6,6 +6,7 @@ import {
   createProjectRepo,
   getProjectByIdRepo,
   updateProjectRepo,
+  getAllProjectsRepo,
 } from '../repositories/projects.repository';
 
 import type { AppInstance } from '../app';
@@ -15,6 +16,25 @@ const PROJECT_TAG = 'Projects' as const;
 const { notFoundMessage, notFoundSchema } = getNotFoundMessageAndSchema('Project');
 
 export function registerProjectRoutes(app: AppInstance) {
+  app.get(
+    '/api/projects',
+    {
+      schema: {
+        tags: [PROJECT_TAG],
+        summary: 'Get projects',
+        response: {
+          200: ProjectSchema.array(),
+        },
+      },
+    },
+    async (_request, reply) => {
+      const projects = await getAllProjectsRepo();
+
+      const apiProjects = projects.map(projectDbToApi);
+      return reply.send(apiProjects);
+    }
+  );
+
   app.get(
     '/api/projects/:id',
     {

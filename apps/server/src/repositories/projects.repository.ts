@@ -6,6 +6,10 @@ import { projectInputApiToDb, projectUpdateApiToDb } from '../mappers/project.ma
 import type { ProjectDb } from '../db/schemas/project.dbSchema';
 import type { ProjectInput, ProjectUpdate } from 'api-contracts/project';
 
+export async function getAllProjectsRepo(): Promise<ProjectDb[]> {
+  return getProjectsCollection().find({}).toArray();
+}
+
 export async function createProjectRepo(input: ProjectInput): Promise<ProjectDb> {
   const projectDb = projectInputApiToDb(input);
   await getProjectsCollection().insertOne(projectDb);
