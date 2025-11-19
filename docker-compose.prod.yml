@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mongo:
     image: mongo:7
@@ -33,9 +31,6 @@ services:
       target: client
     image: mern-base-client
     environment:
-      # If you need to bake the API URL into the Vite build, also set
-      # VITE_API_URL at build time via `docker build` args or envs.
-      # Here it's just an example runtime env (nginx itself doesn't use it).
       VITE_API_URL: https://your-api-domain.com
     ports:
       - '80:80'

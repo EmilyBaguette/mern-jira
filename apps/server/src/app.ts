@@ -56,7 +56,7 @@ export function buildApp() {
           200: z.object({ ok: z.boolean() }),
         },
       },
-      handler: async () => ({ ok: '5' }),
+      handler: async () => ({ ok: true }),
     });
 
     registerIssueRoutes(app);

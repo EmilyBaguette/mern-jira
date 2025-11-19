@@ -1,23 +1,17 @@
 {
   "name": "tiny-tickets",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "type": "module",
   "scripts": {
-    "dev:client": "npm -C apps/client dev",
-    "dev:server": "npm -C apps/server dev",
-    "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
-    "build": "npm -C apps/server build && npm -C apps/client build",
-    "test": "npm -C apps/server test && npm -C apps/client test",
+    "dev": "concurrently -k \"pnpm:dev:server\" \"pnpm:dev:client\"",
+    "dev:client": "pnpm --filter ./apps/client dev",
+    "dev:server": "pnpm --filter ./apps/server dev",
+    "build": "pnpm --filter ./apps/server build && pnpm --filter ./apps/client build",
+    "test": "pnpm --filter ./apps/server test && pnpm --filter ./apps/client test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -b --pretty false --noEmit",
-    "format": "prettier --write .",
-    "docker:up": "docker compose up --build",
-    "docker:down": "docker compose down -v"
+    "format": "prettier --write ."
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -26,8 +20,6 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
-    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -36,14 +28,13 @@
     "eslint-plugin-n": "^17.23.1",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^6.1.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^16.5.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^16.2.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.4"
+    "typescript-eslint": "^8.47.0"
   }
 }
