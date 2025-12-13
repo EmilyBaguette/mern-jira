@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { getUsersCollection } from '../db/collections';
 import { userInputApiToDb, userUpdateApiToDb } from '../mappers/user.mapper';
 
-import type { UserDb } from '../db/schemas/user.dbSchema';
+import type { UserDb } from '../features/users/user.db.schema';
 import type { UserInput, UserUpdate } from 'api-contracts/user';
 
 export async function createUserRepo(input: UserInput): Promise<UserDb> {

@@ -1,21 +1,17 @@
 import { getDb } from './client';
-
 import type { Db } from 'mongodb';
+import { databaseLabels } from './db.config';
 
-let dataDb: Db | null = null;
-let settingsDb: Db | null = null;
+const databases = new Map<string, Db>();
 
 export function initDbs() {
-  dataDb = getDb(process.env.MONGO_DATA_DB ?? 'data');
-  settingsDb = getDb(process.env.MONGO_SETTINGS_DB ?? 'settings');
+  for (const databaseLabel of databaseLabels) {
+    databases.set(databaseLabel, getDb(databaseLabel));
+  }
 }
 
-export function getDataDb(): Db {
-  if (!dataDb) throw new Error('Data DB not initialised');
-  return dataDb;
-}
-
-export function getSettingsDb(): Db {
-  if (!settingsDb) throw new Error('Settings DB not initialised');
-  return settingsDb;
+export function getDatabase(name: string): Db {
+  const database = databases.get(name);
+  if (!database) throw new Error(name + ' database not initialised');
+  return database;
 }

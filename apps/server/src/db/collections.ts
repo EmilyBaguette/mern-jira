@@ -1,39 +1,21 @@
-import { getDataDb } from './databases';
+import { getDatabase } from './databases';
+import { DATA_DB, dataCollectionLabels } from './db.config';
+import type { Collection, Db, Document } from 'mongodb';
 
-import type { IssueDb } from './schemas/issue.dbSchema';
-import type { ProjectDb } from './schemas/project.dbSchema';
-import type { UserDb } from './schemas/user.dbSchema';
-import type { Collection } from 'mongodb';
-
-let issuesCollection: Collection<IssueDb> | null = null;
-let projectsCollection: Collection<ProjectDb> | null = null;
-let usersCollection: Collection<UserDb> | null = null;
+const collections = new Map<string, Collection>();
 
 export function initCollections() {
-  const dataDb = getDataDb();
+  function appendCollections(names: string[], db: Db) {
+    for (const name of names) {
+      collections.set(name, db.collection(name));
+    }
+  }
 
-  issuesCollection = dataDb.collection<IssueDb>('issues');
-  projectsCollection = dataDb.collection<ProjectDb>('projects');
-  usersCollection = dataDb.collection<UserDb>('users');
+  appendCollections(dataCollectionLabels, getDatabase(DATA_DB));
 }
 
-export function getIssuesCollection(): Collection<IssueDb> {
-  if (!issuesCollection) {
-    throw new Error('Issues collections not initialised');
-  }
-  return issuesCollection;
-}
-
-export function getProjectsCollection(): Collection<ProjectDb> {
-  if (!projectsCollection) {
-    throw new Error('Projects collections not initialised');
-  }
-  return projectsCollection;
-}
-
-export function getUsersCollection(): Collection<UserDb> {
-  if (!usersCollection) {
-    throw new Error('Users collections not initialised');
-  }
-  return usersCollection;
+export function getCollection<T extends Document>(name: string): Collection<T> {
+  const collection = collections.get(name);
+  if (!collection) throw new Error(name + ' collection not initialised');
+  return collection as unknown as Collection<T>;
 }

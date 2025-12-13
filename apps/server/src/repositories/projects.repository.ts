@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { getProjectsCollection } from '../db/collections';
 import { projectInputApiToDb, projectUpdateApiToDb } from '../mappers/project.mapper';
 
-import type { ProjectDb } from '../db/schemas/project.dbSchema';
+import type { ProjectDb } from '../features/projects/project.db.schema';
 import type { ProjectInput, ProjectUpdate } from 'api-contracts/project';
 
 export async function getAllProjectsRepo(): Promise<ProjectDb[]> {
