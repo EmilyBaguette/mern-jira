@@ -1,10 +1,10 @@
 import { UserSchema } from 'api-contracts/user';
 
-import { IdParamsSchema, getNotFoundMessageAndSchema } from './routes.common';
-import { userDbToApi } from '../mappers/user.mapper';
-import { getUserByIdRepo } from '../repositories/users.repository';
+import { IdParamsSchema, getNotFoundMessageAndSchema } from '../../utils/common.schema';
+import { userDbToApi } from './user.mapper';
+import { getUserByIdRepo } from './users.repository';
 
-import type { AppInstance } from '../app';
+import type { AppInstance } from '../../app';
 
 const USER_TAG = 'Users' as const;
 

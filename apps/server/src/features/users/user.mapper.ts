@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
 
-import { omitUndefined } from './mapper.utils';
+import { omitUndefined } from '../../utils/mapper.utils';
 
-import type { UserDb } from '../features/users/user.db.schema';
+import type { UserDb } from './user.db.schema';
 import type { User, UserInput, UserUpdate } from 'api-contracts/user';
 
 export function userDbToApi(doc: UserDb): User {

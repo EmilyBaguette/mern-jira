@@ -1,10 +1,10 @@
-import { ISSUES_COLLECTION } from './../db/db.config';
+import { ISSUES_COLLECTION } from '../../db/db.config';
 import { ObjectId } from 'mongodb';
 
-import { getCollection } from '../db/collections';
-import { issueInputApiToDb, issueUpdateApiToDb } from '../mappers/issue.mapper';
+import { getCollection } from '../../db/collections';
+import { issueInputApiToDb, issueUpdateApiToDb } from './issue.mapper';
 
-import type { IssueDb } from '../features/issues/issue.db.schema';
+import type { IssueDb } from './issue.db.schema';
 import { type IssueInput, type IssueUpdate } from 'api-contracts/issue';
 
 const issues = getCollection<IssueDb>(ISSUES_COLLECTION);

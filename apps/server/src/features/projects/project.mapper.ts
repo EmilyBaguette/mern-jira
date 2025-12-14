@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
 
-import { omitUndefined } from './mapper.utils';
+import { omitUndefined } from '../../utils/mapper.utils';
 
-import type { ProjectDb } from '../features/projects/project.db.schema';
+import type { ProjectDb } from './project.db.schema';
 import type { Project, ProjectInput, ProjectUpdate } from 'api-contracts/project';
 
 export function projectDbToApi(doc: ProjectDb): Project {

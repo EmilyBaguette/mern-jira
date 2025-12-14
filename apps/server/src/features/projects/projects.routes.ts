@@ -1,15 +1,15 @@
 import { ProjectInputSchema, ProjectSchema, ProjectUpdateSchema } from 'api-contracts/project';
 
-import { IdParamsSchema, getNotFoundMessageAndSchema } from './routes.common';
-import { projectDbToApi } from '../mappers/project.mapper';
+import { IdParamsSchema, getNotFoundMessageAndSchema } from '../../utils/common.schema';
+import { projectDbToApi } from './project.mapper';
 import {
   createProjectRepo,
   getProjectByIdRepo,
   updateProjectRepo,
   getAllProjectsRepo,
-} from '../repositories/projects.repository';
+} from './projects.repository';
 
-import type { AppInstance } from '../app';
+import type { AppInstance } from '../../app';
 
 const PROJECT_TAG = 'Projects' as const;
 

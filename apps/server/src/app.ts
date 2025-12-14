@@ -12,9 +12,9 @@ import { z } from 'zod';
 
 import { config } from './config';
 import { errorHandler } from './middleware/error-handler';
-import { registerIssueRoutes } from './routes/issues.routes';
-import { registerProjectRoutes } from './routes/projects.routes';
-import { registerUserRoutes } from './routes/users.routes';
+import { registerIssueRoutes } from './features/issues/issue.routes';
+import { registerProjectRoutes } from './features/projects/projects.routes';
+import { registerUserRoutes } from './features/users/users.routes';
 
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
