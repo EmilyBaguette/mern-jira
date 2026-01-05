@@ -10,15 +10,16 @@ import {
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
-import { config } from './config';
 import { errorHandler } from './middleware/error-handler';
 import { registerIssueRoutes } from './features/issues/issue.routes';
 import { registerProjectRoutes } from './features/projects/projects.routes';
 import { registerUserRoutes } from './features/users/users.routes';
 
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { AppContext } from './appContext';
+import { config } from './config';
 
-export function buildApp() {
+export function buildApp(ctx: AppContext) {
   const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);
@@ -59,9 +60,9 @@ export function buildApp() {
       handler: async () => ({ ok: true }),
     });
 
-    registerIssueRoutes(app);
-    registerProjectRoutes(app);
-    registerUserRoutes(app);
+    registerIssueRoutes(app, ctx);
+    registerProjectRoutes(app, ctx);
+    registerUserRoutes(app, ctx);
   });
 
   return app;

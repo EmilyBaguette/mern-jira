@@ -5,12 +5,15 @@ import { userDbToApi } from './user.mapper';
 import { getUserByIdRepo } from './users.repository';
 
 import type { AppInstance } from '../../app';
+import { AppContext } from 'appContext';
 
 const USER_TAG = 'Users' as const;
 
 const { notFoundMessage, notFoundSchema } = getNotFoundMessageAndSchema('User');
 
-export function registerUserRoutes(app: AppInstance) {
+export function registerUserRoutes(app: AppInstance, ctx: AppContext) {
+  const usersCollection = ctx.db.collections.users;
+
   app.get(
     '/api/users/:id',
     {
@@ -27,13 +30,10 @@ export function registerUserRoutes(app: AppInstance) {
     async (request, reply) => {
       const { id } = request.params;
 
-      const user = await getUserByIdRepo(id);
-      if (!user) {
-        return reply.status(404).send(notFoundMessage);
-      }
+      const user = await getUserByIdRepo(usersCollection, id);
+      if (!user) return reply.status(404).send(notFoundMessage);
 
-      const apiUser = userDbToApi(user);
-      return reply.send(apiUser);
+      return userDbToApi(user);
     }
   );
 }

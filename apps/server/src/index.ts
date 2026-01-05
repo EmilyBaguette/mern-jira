@@ -1,15 +1,15 @@
 import { buildApp } from './app';
+import { createAppContext } from './appContext';
 import { config } from './config';
-import { initClient } from './db/client';
-import { initCollections } from './db/collections';
-import { initDbs } from './db/databases';
 
 async function start() {
-  const app = buildApp();
+  const ctx = await createAppContext({ mongoUri: config.clientUri });
+  const app = buildApp(ctx);
 
-  await initClient(config.clientUri);
-  initDbs();
-  initCollections();
+  process.on('SIGTERM', async () => {
+    await ctx.db.client.close();
+    process.exit(0);
+  });
 
   try {
     await app.listen({

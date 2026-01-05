@@ -1,28 +1,34 @@
-import { ObjectId } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 
-import { getCollection } from '../../db/collections';
 import { userInputApiToDb, userUpdateApiToDb } from './user.mapper';
 
 import type { UserDb } from './user.db.schema';
 import type { UserInput, UserUpdate } from 'api-contracts/user';
-import { USERS_COLLECTION } from '../../db/db.config';
 
-const users = getCollection<UserDb>(USERS_COLLECTION);
-
-export async function createUserRepo(input: UserInput): Promise<UserDb> {
+export async function createUserRepo(
+  usersCollection: Collection<UserDb>,
+  input: UserInput
+): Promise<UserDb> {
   const userDb = userInputApiToDb(input);
-  await users.insertOne(userDb);
+  await usersCollection.insertOne(userDb);
   return userDb;
 }
 
-export async function getUserByIdRepo(id: string): Promise<UserDb | null> {
-  return users.findOne({ _id: new ObjectId(id) });
+export async function getUserByIdRepo(
+  usersCollection: Collection<UserDb>,
+  id: string
+): Promise<UserDb | null> {
+  return usersCollection.findOne({ _id: new ObjectId(id) });
 }
 
-export async function updateUserRepo(id: string, update: UserUpdate): Promise<UserDb | null> {
+export async function updateUserRepo(
+  usersCollection: Collection<UserDb>,
+  id: string,
+  update: UserUpdate
+): Promise<UserDb | null> {
   const updateDoc = userUpdateApiToDb(update);
 
-  return await users.findOneAndUpdate(
+  return await usersCollection.findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $set: updateDoc },
     { returnDocument: 'after' }

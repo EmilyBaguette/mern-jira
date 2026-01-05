@@ -1,16 +1,19 @@
 import { type Issue, IssueInputSchema, IssueSchema, IssueUpdateSchema } from 'api-contracts/issue';
 
-import { IdParamsSchema, getNotFoundMessageAndSchema } from '../../utils/common.schema';
+import { IdParamsSchema, getNotFoundMessageAndSchema } from 'utils/common.schema';
 import { issueDbToApi } from './issue.mapper';
 import { createIssueRepo, getIssueByIdRepo, updateIssueRepo } from './issue.repository';
 
-import type { AppInstance } from '../../app';
+import type { AppInstance } from 'app';
+import type { AppContext } from 'appContext';
 
 const ISSUE_TAG = 'Issues' as const;
 
 const { notFoundMessage, notFoundSchema } = getNotFoundMessageAndSchema('Issue');
 
-export function registerIssueRoutes(app: AppInstance) {
+export function registerIssueRoutes(app: AppInstance, ctx: AppContext) {
+  const issuesCollection = ctx.db.collections.issues;
+
   app.get(
     '/api/issues/:id',
     {
@@ -27,13 +30,12 @@ export function registerIssueRoutes(app: AppInstance) {
     async (request, reply) => {
       const { id } = request.params;
 
-      const issue = await getIssueByIdRepo(id);
+      const issue = await getIssueByIdRepo(issuesCollection, id);
       if (!issue) {
-        return reply.status(404).send(notFoundMessage);
+        return reply.code(404).send(notFoundMessage);
       }
 
-      const apiIssue: Issue = issueDbToApi(issue);
-      return reply.send(apiIssue);
+      return issueDbToApi(issue);
     }
   );
 
@@ -55,13 +57,10 @@ export function registerIssueRoutes(app: AppInstance) {
       const { id } = request.params;
       const body = request.body;
 
-      const updated = await updateIssueRepo(id, body);
-      if (!updated) {
-        return reply.status(404).send(notFoundMessage);
-      }
+      const updated = await updateIssueRepo(issuesCollection, id, body);
+      if (!updated) return reply.code(404).send(notFoundMessage);
 
-      const apiIssue: Issue = issueDbToApi(updated);
-      return reply.send(apiIssue);
+      return issueDbToApi(updated);
     }
   );
 
@@ -80,10 +79,10 @@ export function registerIssueRoutes(app: AppInstance) {
     async (request, reply) => {
       const body = request.body;
 
-      const created = await createIssueRepo(body);
+      const created = await createIssueRepo(issuesCollection, body);
       const apiIssue = issueDbToApi(created);
 
-      return reply.status(201).send(apiIssue);
+      return reply.code(201).send(apiIssue);
     }
   );
 }

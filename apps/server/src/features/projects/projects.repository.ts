@@ -1,29 +1,32 @@
-import { ObjectId } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 
 import { projectInputApiToDb, projectUpdateApiToDb } from './project.mapper';
 
 import type { ProjectDb } from './project.db.schema';
 import type { ProjectInput, ProjectUpdate } from 'api-contracts/project';
-import { getCollection } from '../../db/collections';
-import { PROJECTS_COLLECTION } from '../../db/db.config';
 
-const projects = getCollection<ProjectDb>(PROJECTS_COLLECTION);
-
-export async function getAllProjectsRepo(): Promise<ProjectDb[]> {
+export async function getAllProjectsRepo(projects: Collection<ProjectDb>): Promise<ProjectDb[]> {
   return projects.find({}).toArray();
 }
 
-export async function createProjectRepo(input: ProjectInput): Promise<ProjectDb> {
+export async function createProjectRepo(
+  projects: Collection<ProjectDb>,
+  input: ProjectInput
+): Promise<ProjectDb> {
   const projectDb = projectInputApiToDb(input);
   await projects.insertOne(projectDb);
   return projectDb;
 }
 
-export async function getProjectByIdRepo(id: string): Promise<ProjectDb | null> {
+export async function getProjectByIdRepo(
+  projects: Collection<ProjectDb>,
+  id: string
+): Promise<ProjectDb | null> {
   return projects.findOne({ _id: new ObjectId(id) });
 }
 
 export async function updateProjectRepo(
+  projects: Collection<ProjectDb>,
   id: string,
   update: ProjectUpdate
 ): Promise<ProjectDb | null> {

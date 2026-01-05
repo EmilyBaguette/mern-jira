@@ -10,12 +10,15 @@ import {
 } from './projects.repository';
 
 import type { AppInstance } from '../../app';
+import type { AppContext } from 'appContext';
 
 const PROJECT_TAG = 'Projects' as const;
 
 const { notFoundMessage, notFoundSchema } = getNotFoundMessageAndSchema('Project');
 
-export function registerProjectRoutes(app: AppInstance) {
+export function registerProjectRoutes(app: AppInstance, ctx: AppContext) {
+  const projectsCollection = ctx.db.collections.projects;
+
   app.get(
     '/api/projects',
     {
@@ -28,10 +31,9 @@ export function registerProjectRoutes(app: AppInstance) {
       },
     },
     async (_request, reply) => {
-      const projects = await getAllProjectsRepo();
+      const projects = await getAllProjectsRepo(projectsCollection);
 
-      const apiProjects = projects.map(projectDbToApi);
-      return reply.send(apiProjects);
+      return projects.map(projectDbToApi);
     }
   );
 
@@ -51,13 +53,10 @@ export function registerProjectRoutes(app: AppInstance) {
     async (request, reply) => {
       const { id } = request.params;
 
-      const project = await getProjectByIdRepo(id);
-      if (!project) {
-        return reply.status(404).send(notFoundMessage);
-      }
+      const project = await getProjectByIdRepo(projectsCollection, id);
+      if (!project) return reply.status(404).send(notFoundMessage);
 
-      const apiProject = projectDbToApi(project);
-      return reply.send(apiProject);
+      return projectDbToApi(project);
     }
   );
 
@@ -79,13 +78,10 @@ export function registerProjectRoutes(app: AppInstance) {
       const { id } = request.params;
       const body = request.body;
 
-      const updated = await updateProjectRepo(id, body);
-      if (!updated) {
-        return reply.status(404).send(notFoundMessage);
-      }
+      const updated = await updateProjectRepo(projectsCollection, id, body);
+      if (!updated) return reply.status(404).send(notFoundMessage);
 
-      const apiProject = projectDbToApi(updated);
-      return reply.send(apiProject);
+      return projectDbToApi(updated);
     }
   );
 
@@ -104,10 +100,10 @@ export function registerProjectRoutes(app: AppInstance) {
     async (request, reply) => {
       const body = request.body;
 
-      const created = await createProjectRepo(body);
+      const created = await createProjectRepo(projectsCollection, body);
       const apiProject = projectDbToApi(created);
 
-      return reply.status(201).send(apiProject);
+      return reply.code(201).send(apiProject);
     }
   );
 }
